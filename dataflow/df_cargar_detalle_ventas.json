@@ -1,0 +1,75 @@
+{
+	"name": "df_cargar_detalle_ventas",
+	"properties": {
+		"folder": {
+			"name": "Bronze"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_detalle_venta_tienda",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_tabla_detalle_ventas",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          sls_ord_num as string,",
+				"          sls_prd_key as string,",
+				"          sls_cust_id as string,",
+				"          sls_order_dt as string,",
+				"          sls_ship_dt as string,",
+				"          sls_sales as string,",
+				"          sls_quantity as string,",
+				"          sls_price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          orderNumber as string,",
+				"          productKey as string,",
+				"          clientId as string,",
+				"          orderDetail as string,",
+				"          shipDetail as string,",
+				"          sales as string,",
+				"          quantity as string,",
+				"          price as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          orderNumber = sls_ord_num,",
+				"          productKey = sls_prd_key,",
+				"          clientId = sls_cust_id,",
+				"          orderDetail = sls_order_dt,",
+				"          shipDetail = sls_ship_dt,",
+				"          sales = sls_sales,",
+				"          quantity = sls_quantity,",
+				"          price = sls_price",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
