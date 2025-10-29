@@ -1,0 +1,36 @@
+{
+	"name": "ds_tabla_productos_catMant",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "prodId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "subcategory",
+				"type": "nvarchar"
+			},
+			{
+				"name": "maintenance",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "productosCatMant"
+		}
+	}
+}

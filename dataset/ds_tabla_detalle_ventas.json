@@ -1,0 +1,52 @@
+{
+	"name": "ds_tabla_detalle_ventas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "orderNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "productKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "clientId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "orderDetail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "shipDetail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sales",
+				"type": "nvarchar"
+			},
+			{
+				"name": "quantity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "price",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "detalle_ventas"
+		}
+	}
+}

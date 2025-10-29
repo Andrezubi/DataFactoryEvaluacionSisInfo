@@ -1,0 +1,60 @@
+{
+	"name": "df_cargar_clientes_bd_gen",
+	"properties": {
+		"folder": {
+			"name": "Bronze"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_cliente_bd_gen_tienda",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_tabla_clientes_bd_gen",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          CID as string,",
+				"          BDATE as string,",
+				"          GEN as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          cId as string,",
+				"          birthday as string,",
+				"          gender as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          cId = CID,",
+				"          birthday = BDATE,",
+				"          gender = GEN",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

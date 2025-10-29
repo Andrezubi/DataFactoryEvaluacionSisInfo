@@ -1,0 +1,44 @@
+{
+	"name": "ds_tabla_clientes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "cliId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "cliKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "firstName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "lastName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "maritalStatus",
+				"type": "nvarchar"
+			},
+			{
+				"name": "gender",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "clientes"
+		}
+	}
+}

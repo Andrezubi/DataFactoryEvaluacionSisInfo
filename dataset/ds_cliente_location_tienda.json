@@ -1,0 +1,35 @@
+{
+	"name": "ds_cliente_location_tienda",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sa_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Clientes_locationcsv",
+				"container": "raw-tienda"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CID",
+				"type": "String"
+			},
+			{
+				"name": "CNTRY",
+				"type": "String"
+			}
+		]
+	}
+}

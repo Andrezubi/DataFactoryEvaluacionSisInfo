@@ -1,0 +1,28 @@
+{
+	"name": "ds_tabla_cliente_location",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "cId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "country",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "clientesLocation"
+		}
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"name": "ds_tabla_clientes_bd_gen",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "cId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "birthday",
+				"type": "nvarchar"
+			},
+			{
+				"name": "gender",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "clientesBdGen"
+		}
+	}
+}
