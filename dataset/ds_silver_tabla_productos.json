@@ -1,0 +1,55 @@
+{
+	"name": "ds_silver_tabla_productos",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "prodId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "prodKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "cost",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "line",
+				"type": "nvarchar"
+			},
+			{
+				"name": "category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "subcategory",
+				"type": "nvarchar"
+			},
+			{
+				"name": "maintenance",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "productos"
+		}
+	}
+}

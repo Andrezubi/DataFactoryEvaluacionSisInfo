@@ -1,0 +1,59 @@
+{
+	"name": "ds_silver_tabla_detalle_ventas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "orderNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "productKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "clientId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "orderDetail",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "shipDetail",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "sales",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "quantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "price",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "detalle_ventas"
+		}
+	}
+}

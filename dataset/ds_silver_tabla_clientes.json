@@ -1,0 +1,55 @@
+{
+	"name": "ds_silver_tabla_clientes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "cliId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "cliKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "firstName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "lastName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "maritalStatus",
+				"type": "nvarchar"
+			},
+			{
+				"name": "gender",
+				"type": "nvarchar"
+			},
+			{
+				"name": "birthday",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "country",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "clientes"
+		}
+	}
+}

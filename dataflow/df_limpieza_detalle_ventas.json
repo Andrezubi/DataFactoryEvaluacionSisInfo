@@ -1,0 +1,89 @@
+{
+	"name": "df_limpieza_detalle_ventas",
+	"properties": {
+		"folder": {
+			"name": "Silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_tabla_detalle_ventas",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_tabla_detalle_ventas",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          orderNumber as string,",
+				"          productKey as string,",
+				"          clientId as string,",
+				"          orderDetail as string,",
+				"          shipDetail as string,",
+				"          sales as string,",
+				"          quantity as string,",
+				"          price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 cast(output(",
+				"          clientId as integer,",
+				"          orderDetail as integer,",
+				"          shipDetail as integer,",
+				"          sales as integer,",
+				"          quantity as integer,",
+				"          price as decimal(10,0)",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          orderNumber as string,",
+				"          productKey as string,",
+				"          clientId as integer,",
+				"          orderDetail as integer,",
+				"          shipDetail as integer,",
+				"          sales as integer,",
+				"          quantity as integer,",
+				"          price as decimal(9,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          orderNumber,",
+				"          productKey,",
+				"          clientId,",
+				"          orderDetail,",
+				"          shipDetail,",
+				"          sales,",
+				"          quantity,",
+				"          price",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

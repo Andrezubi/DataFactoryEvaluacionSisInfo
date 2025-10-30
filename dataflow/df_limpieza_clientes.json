@@ -1,0 +1,170 @@
+{
+	"name": "df_limpieza_clientes",
+	"properties": {
+		"folder": {
+			"name": "Silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_tabla_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_tabla_clientes_bd_gen",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_tabla_cliente_location",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_tabla_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          cliId as string,",
+				"          cliKey as string,",
+				"          firstName as string,",
+				"          lastName as string,",
+				"          maritalStatus as string,",
+				"          gender as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          cId as string,",
+				"          birthday as string,",
+				"          gender as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"source(output(",
+				"          cId as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source3",
+				"source1, derivedColumn1 join(cliKey == cId,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"source2 derive(cId = replace(cId,'NAS', '')) ~> derivedColumn1",
+				"source3 derive(cId = replace(cId, '-', '')) ~> derivedColumn2",
+				"join1, derivedColumn2 join(cliKey == derivedColumn2@cId,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 cast(output(",
+				"          cliId as integer,",
+				"          birthday as date 'yyyy-MM-dd'",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"select1 derive(generoArreglado = \r",
+				"\r",
+				"iif(\r",
+				"    coalesce(genderA, '') != '',\r",
+				"    genderA,\r",
+				"    iif(lower(genderB) == 'male', 'M',\r",
+				"        iif(lower(genderB) == 'female', 'F', 'ND')\r",
+				"    )\r",
+				"),",
+				"          firstName = trim(firstName),",
+				"          lastName = trim(lastName)) ~> derivedColumn3",
+				"cast1 select(mapColumn(",
+				"          cliId,",
+				"          cliKey,",
+				"          firstName,",
+				"          lastName,",
+				"          maritalStatus,",
+				"          genderA = source1@gender,",
+				"          cIdA = derivedColumn1@cId,",
+				"          birthday,",
+				"          genderB = source2@gender,",
+				"          cIdB = derivedColumn2@cId,",
+				"          country",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedColumn3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          cliId as integer,",
+				"          cliKey as string,",
+				"          firstName as string,",
+				"          lastName as string,",
+				"          maritalStatus as string,",
+				"          gender as string,",
+				"          birthday as timestamp,",
+				"          country as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          cliId,",
+				"          cliKey,",
+				"          firstName,",
+				"          lastName,",
+				"          maritalStatus,",
+				"          gender = generoArreglado,",
+				"          birthday,",
+				"          country",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
