@@ -1,0 +1,58 @@
+{
+	"name": "ds_gold_hechos_ventas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_dw_tienda_delta",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "orderNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "productKeyID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "clientKeyID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "orderDetailID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "shipDetailID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "sales",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "quantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "price",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "hechos_detalle_ventas"
+		}
+	}
+}
