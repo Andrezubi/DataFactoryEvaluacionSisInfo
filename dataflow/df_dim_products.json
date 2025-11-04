@@ -1,0 +1,98 @@
+{
+	"name": "df_dim_products",
+	"properties": {
+		"folder": {
+			"name": "Gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_tabla_productos",
+						"type": "DatasetReference"
+					},
+					"name": "productos"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_categories",
+						"type": "DatasetReference"
+					},
+					"name": "dimCategory"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_productos",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          prodId as integer,",
+				"          prodKey as string,",
+				"          name as string,",
+				"          cost as decimal(9,2),",
+				"          line as string,",
+				"          category as string,",
+				"          subcategory as string,",
+				"          maintenance as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT *\\nFROM silver.productos p\\nWHERE p.prodKey IN (\\n    SELECT prodKey\\n    FROM silver.productos\\n    GROUP BY prodKey\\n    HAVING COUNT(*) = 1\\n)',",
+				"     format: 'query') ~> productos",
+				"source(output(",
+				"          categoryId as integer,",
+				"          category as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimCategory",
+				"productos, dimCategory lookup(productos@category == dimCategory@category,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          productKey as string,",
+				"          name as string,",
+				"          cost as decimal(9,2),",
+				"          line as string,",
+				"          categoryID as integer,",
+				"          subcategory as string,",
+				"          maintenance as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          productKey = prodKey,",
+				"          name,",
+				"          cost,",
+				"          line,",
+				"          categoryID = categoryId,",
+				"          subcategory,",
+				"          maintenance",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

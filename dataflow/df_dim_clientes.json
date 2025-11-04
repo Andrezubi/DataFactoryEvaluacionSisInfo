@@ -1,0 +1,120 @@
+{
+	"name": "df_dim_clientes",
+	"properties": {
+		"folder": {
+			"name": "Gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_tabla_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "clientes"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_country",
+						"type": "DatasetReference"
+					},
+					"name": "dimCountry"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_gender",
+						"type": "DatasetReference"
+					},
+					"name": "dimGender"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gold_dim_clientes",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          cliId as integer,",
+				"          cliKey as string,",
+				"          firstName as string,",
+				"          lastName as string,",
+				"          maritalStatus as string,",
+				"          gender as string,",
+				"          birthday as timestamp,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT *\\nFROM silver.clientes c\\nWHERE c.cliKey IN (\\n    SELECT cliKey\\n    FROM silver.clientes\\n    GROUP BY cliKey\\n    HAVING COUNT(*) = 1\\n)',",
+				"     format: 'query') ~> clientes",
+				"source(output(",
+				"          countyId as integer,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimCountry",
+				"source(output(",
+				"          genderId as integer,",
+				"          gender as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dimGender",
+				"clientes, dimCountry lookup(clientes@country == dimCountry@country,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, dimGender lookup(clientes@gender == dimGender@gender,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          clientKey as string,",
+				"          firstName as string,",
+				"          lastName as string,",
+				"          maritalStatus as string,",
+				"          genderId as integer,",
+				"          birthday as timestamp,",
+				"          countryId as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          clientKey = cliKey,",
+				"          firstName,",
+				"          lastName,",
+				"          maritalStatus,",
+				"          genderId,",
+				"          birthday,",
+				"          countryId = countyId",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
